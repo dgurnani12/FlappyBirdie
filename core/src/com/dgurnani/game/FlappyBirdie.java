@@ -97,8 +97,8 @@ public class FlappyBirdie extends ApplicationAdapter {
                 Y_Position -= Y_Velocity; // speed * (a single unit of distance) = |speed| in unit time of distance
             }
 
-            // game over condition
-            if(Y_Position == 0) {
+            // game over condition DOESN"T WORK THE WAY YOU THINK ...
+            if(Y_Position <= 0) {
                 isGameOn = false;
             }
 
