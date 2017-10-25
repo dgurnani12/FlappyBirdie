@@ -27,13 +27,14 @@ public class FlappyBirdie extends ApplicationAdapter {
     private Texture bottomTube;
 
     private float gap = 400;
-    private float maxTubeOffset;
+    private float maxTubeDisplacement;
     private Random randomGenerator;
     private float tubeVelocity = 4; // (+ is leftward)
-    private int numberOfTubes = 4;
-    private float[] tubeX = new float[numberOfTubes];
-    private float[] tubeOffset = new float[numberOfTubes];
+    private int numberOfTubesSets = 4;
     private float distanceBetweenTubes;
+
+    private float[] tubeX = new float[numberOfTubesSets]; // All tube sets positions on X axis
+    private float[] tubeOffset = new float[numberOfTubesSets]; // Y axis offsets of the tube sets
 
     @Override
 	public void create () {
@@ -49,15 +50,19 @@ public class FlappyBirdie extends ApplicationAdapter {
 		// Gets the bird exactly at the center
 		Y_Position = Gdx.graphics.getHeight() / 2 - birds[0].getHeight() / 2;
 
-        // Tubes
+        // Tube setup
         topTube = new Texture("toptube.png");
         bottomTube = new Texture("bottomtube.png");
-        maxTubeOffset = Gdx.graphics.getHeight() / 2 - gap / 2 - 100;
+
+        maxTubeDisplacement = Gdx.graphics.getHeight() / 2 - gap / 2 - 100; // 100 for the rim height + some extra
+
         randomGenerator = new Random();
+
         distanceBetweenTubes = Gdx.graphics.getWidth() * 3 / 4;
 
-        for (int i = 0; i < numberOfTubes; i++) {
-            tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);
+        // Setting the X-axis position of all tubes and there respective offsets
+        for (int i = 0; i < numberOfTubesSets; i++) {
+            tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * 2 * maxTubeDisplacement;
             tubeX[i] = Gdx.graphics.getWidth() / 2 - topTube.getWidth() / 2 + i * distanceBetweenTubes;
         }
 	}
@@ -74,9 +79,10 @@ public class FlappyBirdie extends ApplicationAdapter {
                 Y_Velocity = -30; // speed in upward direction (against gravity)
             }
 
-            for (int i = 0; i < numberOfTubes; i++) {
+            // update the 4 sets of tubes
+            for (int i = 0; i < numberOfTubesSets; i++) {
                 if (tubeX[i] < - topTube.getWidth()) {
-                    tubeX[i] += numberOfTubes * distanceBetweenTubes;
+                    tubeX[i] += numberOfTubesSets * distanceBetweenTubes;
                 } else {
                     tubeX[i] = tubeX[i] - tubeVelocity;
                 }
