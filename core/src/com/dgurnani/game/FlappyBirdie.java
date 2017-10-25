@@ -82,8 +82,11 @@ public class FlappyBirdie extends ApplicationAdapter {
             // update the 4 sets of tubes
             for (int i = 0; i < numberOfTubesSets; i++) {
                 if (tubeX[i] < - topTube.getWidth()) {
+                    // off screen and moving away case
+                    tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * 2 * maxTubeDisplacement;
                     tubeX[i] += numberOfTubesSets * distanceBetweenTubes;
                 } else {
+                    // on screen or moving towards case
                     tubeX[i] = tubeX[i] - tubeVelocity;
                 }
 
@@ -97,7 +100,7 @@ public class FlappyBirdie extends ApplicationAdapter {
                 Y_Position -= Y_Velocity; // speed * (a single unit of distance) = |speed| in unit time of distance
             }
 
-            // game over condition 
+            // game over condition
             if(Y_Position <= 0) {
                 isGameOn = false;
             }
