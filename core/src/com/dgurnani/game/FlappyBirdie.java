@@ -8,19 +8,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class FlappyBirdie extends ApplicationAdapter {
 
-	SpriteBatch batch;
-	Texture background;
+	private SpriteBatch batch;
+    private Texture background;
 
-	Texture[] birds; // holds 3 birds states to create motion
-	int flapState = 0; // index for  image state for flappy bird
+    private Texture[] birds; // holds 3 birds image states to create motion
+    private int flapState = 0; // index for image state for flappy bird
+    private int imageUpdateCounter = 0;
 
-	int imageUpdateCounter = 0;
+    private float Y_Position = 0; // Y-axis position
+    private float Y_Velocity = 0; // Y-axis velocity (+ is downward)
+    private float Y_Gravity = 2; // Y-axis gravitational acceleration (+ is downward)
 
-	float Y_Position = 0; // Y-axis position
-	float Y_Velocity = 0; // Y-axis velocity
-	float Y_Gravity = 2; // Y-axis gravitational acceleration
-
-	int gameState = 0; // state of the game (did user touch the screen)
+    private boolean isGameOn = false;
 
 	@Override
 	public void create () {
@@ -43,14 +42,27 @@ public class FlappyBirdie extends ApplicationAdapter {
 		// draw background:
 		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
+		if(isGameOn) {
+            if (Gdx.input.justTouched()) {
+                Y_Velocity = -30; // speed in upward direction (against gravity)
+            }
+
+            if (Y_Position > 0 || Y_Velocity < 0) {
+                Y_Velocity = Y_Velocity + Y_Gravity;
+                Y_Position -= Y_Velocity;
+            }
+        } else {
+            if (Gdx.input.justTouched()) {
+                isGameOn = true;
+            }
+        }
+
 		// Draw bird:
 		if(imageUpdateCounter % 10 == 0) {
 			flapStateConfig();
 		}
 		batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, Y_Position);
 		imageUpdateCounter++;
-
-		
 
 		batch.end();
 	}
