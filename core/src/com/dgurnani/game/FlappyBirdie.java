@@ -16,14 +16,17 @@ import java.util.Random;
 
 public class FlappyBirdie extends ApplicationAdapter {
 
-    private SpriteBatch batch;
+    private SpriteBatch batch; // Stores the sprites as textures
+
     private Texture background;
     private Texture gameover;
+    private Texture topTube;
+    private Texture bottomTube;
 
-    //private ShapeRenderer sr; // for debugging purposes (Do not Delete!)
+    //private ShapeRenderer sr; // for debugging purposes, do not remove
 
     private boolean isGameOn = false; // game state
-    private boolean isGameOver = false;
+    private boolean isGameOver = false;  // not equal to !isGameOn, do not Remove
 
     private Texture[] birds; // holds 3 bird image states to create bird motion
     private int flapState = 0; // index for image state for flappy bird
@@ -33,36 +36,35 @@ public class FlappyBirdie extends ApplicationAdapter {
     private float Y_Velocity = 0; // Y-axis velocity (+ is downward)
     private float Y_Gravity = 2; // Y-axis gravitational acceleration (+ is downward)
 
-    private Circle birdShadow; // Circle - an easy way to shadow the bird
+    private Circle birdShadow; // circle: an easy way to shadow the bird for collisions
+    private Rectangle[] topTubeShadows; // rectangles: an easy way to shadow the tubes for collisions
+    private Rectangle[] bottomTubeShadows;
 
-    private Texture topTube;
-    private Texture bottomTube;
-
+    // Tube Parameters:
+    private int numberOfTubeSets = 4;
     private float gap = 400;
     private float maxTubeDisplacement;
-    private Random randomGenerator;
     private float tubeVelocity = 4; // (+ is leftward)
-    private int numberOfTubeSets = 4;
     private float distanceBetweenTubes;
-
-    private float tubeXSync;
+    private float tubeXSync; // shifts the tubes before starting
     private float[] tubeX = new float[numberOfTubeSets]; // All tube sets positions on X axis
     private float[] tubeOffset = new float[numberOfTubeSets]; // Y axis offsets of the tube sets
 
-    private Rectangle[] topTubeShadows;
-    private Rectangle[] bottomTubeShadows;
+    private Random randomGenerator; // used to generate the tubes position randomly on screen
 
+    // Scoring Parameters:
     private int score = 0;
-    private int scoringTube = 0;
+    private int scoringTube = 0; // Each time this tube passes the center of screen, score++
     private BitmapFont font;
 
     @Override
 	public void create () {
 
-        //sr = new ShapeRenderer();
+        //sr = new ShapeRenderer(); // for debugging purposes, do not remove
 
         batch = new SpriteBatch();
-		background = new Texture("background.png");
+
+        background = new Texture("background.png");
         gameover = new Texture("gameover.png");
 
         birdShadow = new Circle();
@@ -111,7 +113,7 @@ public class FlappyBirdie extends ApplicationAdapter {
         if(isGameOver) {
             if (Gdx.input.justTouched()) {
                 isGameOn = true;
-                isGameOver = false; // get out of gamerover state
+                isGameOver = false; // get out of gameover state
                 score = 0;
                 scoringTube = 0;
                 Y_Velocity = 0;
@@ -126,6 +128,7 @@ public class FlappyBirdie extends ApplicationAdapter {
 
             if (isGameOn) {
 
+                // Update the score:
                 if (tubeX[scoringTube] < Gdx.graphics.getWidth() / 2) {
                     score++;
                     Gdx.app.log("Score", String.valueOf(score));
@@ -134,11 +137,12 @@ public class FlappyBirdie extends ApplicationAdapter {
                     scoringTube = scoringTube % numberOfTubeSets;
                 }
 
+                // Update the Y_Velocity if tapped
                 if (Gdx.input.justTouched()) {
                     Y_Velocity = -30; // speed in upward direction (against gravity)
                 }
 
-                // update the 4 sets of tubes
+                // Update the 4 sets of tubes
                 for (int i = 0; i < numberOfTubeSets; i++) {
                     if (tubeX[i] < -topTube.getWidth()) {
                         // off screen and moving away case
@@ -152,18 +156,18 @@ public class FlappyBirdie extends ApplicationAdapter {
                     batch.draw(topTube, tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]);
                     batch.draw(bottomTube, tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i]);
 
-                    // shadows
-                    topTubeShadows[i] = new Rectangle(tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i], topTube.getWidth(), topTube.getHeight());
-                    bottomTubeShadows[i] = new Rectangle(tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth(), bottomTube.getHeight());
+                    // tube shadows
+                    topTubeShadows[i] = new Rectangle(tubeX[i] + 9, Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]+11, topTube.getWidth()-18 , topTube.getHeight());
+                    bottomTubeShadows[i] = new Rectangle(tubeX[i] + 9, Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth()-18, bottomTube.getHeight()-11);
                 }
 
-                // position update system
+                // Update the position of bird
                 if (Y_Position > 0 || Y_Velocity < 0) {
                     Y_Velocity = Y_Velocity + Y_Gravity; // acceleration * (unit of speed) = |acceleration| in unit of speed
                     Y_Position -= Y_Velocity; // speed * (a single unit of distance) = |speed| in unit time of distance
                 }
 
-                // game over condition
+                // Gameover condition: hit the floor
                 if(Y_Position <= 0) {
                     Gameover();
                 }
@@ -174,29 +178,30 @@ public class FlappyBirdie extends ApplicationAdapter {
                 }
             }
 
-            // Draw bird:
+            // Update Bird image every 10 render calls:
             if (imageUpdateCounter % 10 == 0) {
                 flapStateConfig();
                 if (imageUpdateCounter == 20) {
                     imageUpdateCounter = 0; // keeps this counter from running out memory
                 }
-
             }
 
+            // Things that need to happen regardless of isGameOn:
             batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, Y_Position);
             imageUpdateCounter++;
 
+            // Draw the score to the screen
             font.draw(batch, String.valueOf(score), 100, 200);
 
             birdShadow.set(Gdx.graphics.getWidth() / 2, Y_Position + birds[flapState].getHeight() / 2, birds[flapState].getWidth() / 2);
 
-            //sr.begin(ShapeRenderer.ShapeType.Filled);
-            //sr.setColor(Color.RED);
-            //sr.circle(birdShadow.x, birdShadow.y, birdShadow.radius);
+            //sr.begin(ShapeRenderer.ShapeType.Filled); // for debugging purposes, do not remove
+            //sr.setColor(Color.RED); // for debugging purposes, do not remove
+            //sr.circle(birdShadow.x, birdShadow.y, birdShadow.radius); // for debugging purposes, do not remove
 
             for (int i = 0; i < numberOfTubeSets; i++) {
-                //sr.rect(tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i], topTube.getWidth(), topTube.getHeight());
-                //sr.rect(tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth(), bottomTube.getHeight());
+                //sr.rect(tubeX[i]+9, Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]+11, topTube.getWidth()-18, topTube.getHeight()); // for debugging purposes, do not remove
+                //sr.rect(tubeX[i]+9, Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth()-18, bottomTube.getHeight()-11); // for debugging purposes, do not remove
 
                 // game over condition
                 if (Intersector.overlaps(birdShadow, topTubeShadows[i]) || Intersector.overlaps(birdShadow, bottomTubeShadows[i])) {
@@ -204,8 +209,7 @@ public class FlappyBirdie extends ApplicationAdapter {
                 }
             }
 
-            //sr.end();
-
+            //sr.end(); // for debugging purposes, do not remove
             batch.end();
         }
     }
@@ -215,7 +219,7 @@ public class FlappyBirdie extends ApplicationAdapter {
         // Do nothing
 	}
 
-	// return the next flapState in the sequence 0,1,2 ...
+	// Return the next flapState in the sequence 0,1,2 ...
 	private void flapStateConfig() {
 		if (flapState == 0) {
 			flapState = 1;
@@ -247,5 +251,4 @@ public class FlappyBirdie extends ApplicationAdapter {
         isGameOver = true;
         batch.draw(gameover, Gdx.graphics.getWidth() / 2 - gameover.getWidth() / 2, Gdx.graphics.getHeight() / 2 - gameover.getHeight() / 2);
     }
-
 }
