@@ -6,6 +6,7 @@ Tap on the screen to increase vertical velocity, dodge all the obsticles in your
 Try to acheive a high score eveytime you play
 
 ## Screenshots:
+The thrid screen-capture depicts the collision system
 <p align="center">
   <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985574.png" width="216" height="384"/>
   <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985455.png"width="216" height="384"/>
