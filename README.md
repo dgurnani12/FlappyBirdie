@@ -8,7 +8,7 @@ Try to acheive a high score eveytime you play
 ## Screenshots:
 <p align="center">
   <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985574.png"/>
-  <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985581.png"/>
+  <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985455.png"/>
   <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985395.png"/>
 </p>
 
