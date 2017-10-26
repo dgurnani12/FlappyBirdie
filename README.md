@@ -6,8 +6,11 @@ Tap on the screen to increase vertical velocity, dodge all the obsticles in your
 Try to acheive a high score eveytime you play
 
 ## Screenshots:
-
-
+<p align="center">
+  <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985574.png"/>
+  <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985581.png"/>
+  <img src="https://github.com/dgurnani12/FlappyBirdie/blob/master/Screenshot_1508985395.png"/>
+</p>
 
 ## Installation:
 1) Try clonning this repo and opening with Android Studio.
