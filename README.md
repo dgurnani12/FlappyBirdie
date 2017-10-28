@@ -1,5 +1,5 @@
 # FlappyBirdie -- Flappy Bird Clone for Android
-A Flappybird clone I made for Android using Android Studio and the [Libgdx Java game development framework](https://libgdx.badlogicgames.com/index.html).
+A Flappybird clone I made for Android using Android Studio and the [Libgdx Java](https://libgdx.badlogicgames.com/index.html) game development framework.
 
 ## How to play:
 Tap on the screen to increase vertical velocity, dodge all the obsticles in your path.
